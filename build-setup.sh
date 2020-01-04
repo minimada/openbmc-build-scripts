@@ -115,7 +115,7 @@ echo "Build started, $(date)"
 # If the obmc_dir directory doesn't exist clone it in
 if [ ! -d ${obmc_dir} ]; then
   echo "Clone in openbmc master to ${obmc_dir}"
-  git clone https://github.com/openbmc/openbmc ${obmc_dir}
+  git clone -b runbmc --single-branch https://github.com/Nuvoton-Israel/openbmc ${obmc_dir}
 fi
 
 # Make and chown the xtrct_path directory to avoid permission errors
@@ -190,6 +190,11 @@ case ${target} in
   gsj)
     LAYER_DIR="meta-quanta/meta-gsj"
     MACHINE="gsj"
+    DISTRO="openbmc-phosphor"
+    ;;
+  olympus-nuvoton)
+    LAYER_DIR="meta-quanta/meta-olympus-nuvoton"
+    MACHINE="olympus-nuvoton"
     DISTRO="openbmc-phosphor"
     ;;
   *)
