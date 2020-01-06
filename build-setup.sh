@@ -438,5 +438,9 @@ ${WORKSPACE}/build.sh
 # To maintain function of resources that used an older path, add a link
 ln -sf ${xtrct_path}/deploy ${WORKSPACE}/deploy
 
+chmod a+x ${WORKSPACE}/openbmc-build-script/gen_images.sh
+
+${WORKSPACE}/openbmc-build-script/gen_images.sh ${WORKSPACE}/deploy/images/${MACHINE}/obmc-phosphor-image-${MACHINE}.static.mtd 3
+
 # Timestamp for build
 echo "Build completed, $(date)"
