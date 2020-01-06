@@ -440,7 +440,7 @@ ln -sf ${xtrct_path}/deploy ${WORKSPACE}/deploy
 
 chmod a+x ${WORKSPACE}/openbmc-build-script/gen_images.sh
 
-${WORKSPACE}/openbmc-build-script/gen_images.sh ${WORKSPACE}/deploy/images/${MACHINE}/obmc-phosphor-image-${MACHINE}.static.mtd 3
+${WORKSPACE}/openbmc-build-script/gen_images.sh ${WORKSPACE}/deploy/images/${MACHINE}/obmc-phosphor-image-${MACHINE}.static.mtd.tar 3
 
 # Timestamp for build
 echo "Build completed, $(date)"
