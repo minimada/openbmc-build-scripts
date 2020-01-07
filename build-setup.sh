@@ -457,7 +457,7 @@ sshpass -e sftp -oBatchMode=no -b - ${SSHUSER}@${SSHHOST} << !
 
 export token=`curl -k -H "Content-Type: application/json" -X POST https://${BMC_IP}/login -d '{"username" :  "root", "password" :  "0penBmc"}' | grep token | awk '{print $2;}' | tr -d '"'`
 
-curl -k -H "X-Auth-Token: $token" -H "Content-Type: application/octet-stream" -X POST -T ${WORKSPACE}/deploy/images/${MACHINE}/test_1.static.mtd.tar https://${BMC_IP}/redfish/v1/UpdateService
+curl -k -H "X-Auth-Token: $token" -H "Content-Type: application/octet-stream" -X POST -T ${WORKSPACE}/deploy/images/${MACHINE}/obmc-phosphor-image-${MACHINE}.static.mtd.all.tar https://${BMC_IP}/redfish/v1/UpdateService
 
 sleep 60
 
