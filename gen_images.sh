@@ -11,6 +11,7 @@ Usage(){
 }
 
 print_env(){
+    echo "============================="
     echo "TEMP_DIR: ${TEMP_DIR}"
     echo "PRIVATE_KEY: ${PRIVATE_KEY}"
     echo "ROOT_DIR: ${ROOT_DIR}"
@@ -21,18 +22,38 @@ print_env(){
     echo "pseq=${pseq}"
     echo "OUTPUT_HEADER: ${OUTPUT_HEADER}"
     echo "OUTPUT_TAIL: ${OUTPUT_TAIL}"
+    echo "INPUT: ${INPUT}"
+    echo "============================="
 }
 
+add_flist(){
+    output=${SOURCE_DIR}/${OUTPUT_HEADER}_${1}.${OUTPUT_TAIL}
+    flist="${flist} ${output}"
+}
+
+fullname(){
+    output=${SOURCE_DIR}/${1}
+    flist="${flist} ${output}"
+}
+
+# default value, modify if need
 OPENSSL=openssl
 TEMP_DIR=${WORKSPACE}/tmp/pack_source
 PRIVATE_KEY=OpenBMC.priv
-ROOT_DIR=`dirname "${0}"`
-SOURCE_DIR=""
 PACK_NUM=3
 MANIFEST="${TEMP_DIR}/MANIFEST"
-VERSION=""
 OUTPUT_HEADER=test
 OUTPUT_TAIL=static.mtd.tar
+# should not edit
+ROOT_DIR=`dirname "${0}"`
+SOURCE_DIR=""
+VERSION=""
+INPUT=""
+
+# solve relative path, source dir need handle after get path
+cd ${ROOT_DIR}
+ROOT_DIR=$(pwd)
+cd - 1>/dev/null
 
 # ==== check env ====
 # openssl util
@@ -58,8 +79,16 @@ fi
 mkdir -p ${TEMP_DIR}
 # untar
 tar -xf "$1" -C "${TEMP_DIR}"
+# handle source dir
 SOURCE_DIR=`dirname "$1"`
+cd ${SOURCE_DIR}
+SOURCE_DIR=$(pwd)
+cd - 1>/dev/null
+# remove old test data, if exist
 rm -f ${SOURCE_DIR}/${OUTPUT_HEADER}*
+# get filename header, but..., name start with test is good for delete
+fname=`basename $1`
+INPUT=${fname%.${OUTPUT_TAIL}}
 
 shift
 if [ -n "$1" ];then
@@ -71,18 +100,13 @@ if [ "$?" != "0" ];then
     Usage
     exit 1
 fi
-# solve relative path
-cd ${ROOT_DIR}
-ROOT_DIR=$(pwd)
-cd - 1>/dev/null
-cd ${SOURCE_DIR}
-SOURCE_DIR=$(pwd)
 
 # ==== get version ====
 VERSION=`grep -o "version=.*" ${MANIFEST}`
 print_env
 
-# sign and pack
+# ==== sign and pack ====
+# change version
 flist=""
 cd ${TEMP_DIR}
 for i in $(seq 1 "$PACK_NUM");
@@ -92,15 +116,30 @@ do
     openssl dgst -sha256 -sign ${ROOT_DIR}/${PRIVATE_KEY} -out ${MANIFEST}.sig ${MANIFEST}
     #print_env
     #exit
-    output=${SOURCE_DIR}/${OUTPUT_HEADER}_${i}.${OUTPUT_TAIL}
-    flist="${flist} ${output}"
-    tar -cf ${SOURCE_DIR}/${OUTPUT_HEADER}_${i}.${OUTPUT_TAIL} .
+    add_flist ${i} 
+    tar -cf ${output} .
 done
 if [ "$?" != "0" ];then
     echo "tar file error..."
     exit 1
 fi
-#rm -r ${TEMP_DIR}
+
+# ==== make error image for auto test ===
+cd ${TEMP_DIR}
+# no kernel
+fullname "bmc_nokernel_image.static.mtd.tar"
+tar -cf ${output} --exclude=image-kernel* . 
+
+# no public key
+fullname "bmc_bad_unsig.static.mtd.tar"
+tar -cf ${output} --exclude=publickey* .
+
+# wrong manifest
+fullname "bmc_bad_manifest.static.mtd.tar"
+sed -i "s/MachineName=.*//g" ${MANIFEST}
+openssl dgst -sha256 -sign ${ROOT_DIR}/${PRIVATE_KEY} -out ${MANIFEST}.sig ${MANIFEST}
+tar -cf ${output} .
+
+rm -r ${TEMP_DIR}
 echo "repack finished..."
 echo "out files:${flist}"
-
