@@ -444,6 +444,17 @@ chmod a+x ${WORKSPACE}/openbmc-build-script/gen_images.sh
 
 ${WORKSPACE}/openbmc-build-script/gen_images.sh ${WORKSPACE}/deploy/images/${MACHINE}/obmc-phosphor-image-${MACHINE}.static.mtd.tar 3
 
+cd ${WORKSPACE}/deploy/images/${MACHINE}
+sshpass -e sftp -oBatchMode=no -b - ${SSHUSER}@${SSHHOST} << !
+   put test_1.static.mtd.tar /tftpboot
+   put test_2.static.mtd.tar /tftpboot
+   put test_3.static.mtd.tar /tftpboot
+   put bmc_nokernel_image.static.mtd.tar /tftpboot
+   put bmc_bad_unsig.static.mtd.tar /tftpboot
+   put bmc_bad_manifest.static.mtd.tar /tftpboot
+   bye
+!
+
 export token=`curl -k -H "Content-Type: application/json" -X POST https://${BMC_IP}/login -d '{"username" :  "root", "password" :  "0penBmc"}' | grep token | awk '{print $2;}' | tr -d '"'`
 
 curl -k -H "X-Auth-Token: $token" -H "Content-Type: application/octet-stream" -X POST -T ${WORKSPACE}/deploy/images/${MACHINE}/test_1.static.mtd.tar https://${BMC_IP}/redfish/v1/UpdateService
