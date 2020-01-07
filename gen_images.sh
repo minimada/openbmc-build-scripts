@@ -24,7 +24,7 @@ print_env(){
 }
 
 OPENSSL=openssl
-TEMP_DIR=/tmp/pack_source
+TEMP_DIR=${WORKSPACE}/tmp/pack_source
 PRIVATE_KEY=OpenBMC.priv
 ROOT_DIR=`dirname "${0}"`
 SOURCE_DIR=""
