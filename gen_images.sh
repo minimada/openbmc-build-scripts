@@ -111,7 +111,7 @@ flist=""
 cd ${TEMP_DIR}
 for i in $(seq 1 "$PACK_NUM");
 do
-    ver="${VERSION}-${i}"
+    ver="${VERSION}"
     sed -i "s/version=.*/${ver}/g" ${MANIFEST}
     openssl dgst -sha256 -sign ${ROOT_DIR}/${PRIVATE_KEY} -out ${MANIFEST}.sig ${MANIFEST}
     #print_env
