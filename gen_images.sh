@@ -108,21 +108,21 @@ print_env
 # ==== sign and pack ====
 # change version
 flist=""
-cd ${TEMP_DIR}
-for i in $(seq 1 "$PACK_NUM");
-do
-    ver="${VERSION}"
-    sed -i "s/version=.*/${ver}/g" ${MANIFEST}
-    openssl dgst -sha256 -sign ${ROOT_DIR}/${PRIVATE_KEY} -out ${MANIFEST}.sig ${MANIFEST}
-    #print_env
-    #exit
-    add_flist ${i} 
-    tar -cf ${output} .
-done
-if [ "$?" != "0" ];then
-    echo "tar file error..."
-    exit 1
-fi
+#cd ${TEMP_DIR}
+#for i in $(seq 1 "$PACK_NUM");
+#do
+#    ver="${VERSION}"
+#    sed -i "s/version=.*/${ver}/g" ${MANIFEST}
+#    openssl dgst -sha256 -sign ${ROOT_DIR}/${PRIVATE_KEY} -out ${MANIFEST}.sig ${MANIFEST}
+#    #print_env
+#    #exit
+#    add_flist ${i} 
+#    tar -cf ${output} .
+#done
+#if [ "$?" != "0" ];then
+#    echo "tar file error..."
+#    exit 1
+#fi
 
 # ==== make error image for auto test ===
 cd ${TEMP_DIR}

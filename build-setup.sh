@@ -80,7 +80,7 @@ build_dir=${build_dir:-/tmp/openbmc}
 distro=${distro:-ubuntu}
 img_tag=${img_tag:-latest}
 target=${target:-qemu}
-no_tar=${no_tar:-false}
+no_tar=${no_tar:-yes}
 nice_priority=${nice_priority:-}
 
 # Deployment variables
@@ -396,6 +396,19 @@ if [[ ${xtrct_small_copy_dir} ]]; then
 else
   timeout ${xtrct_copy_timeout} cp -r ${build_dir}/* ${xtrct_path}
 fi
+
+git commit --amend  --no-edit
+bitbake ${BITBAKE_OPTS}
+timeout ${xtrct_copy_timeout} cp -r ${build_dir}/${xtrct_small_copy_dir}/obmc-phosphor-image-olympus-nuvoton.static.mtd ${xtrct_path}/${xtrct_small_copy_dir}/test_1.static.mtd.tar
+
+git commit --amend  --no-edit
+bitbake ${BITBAKE_OPTS}
+timeout ${xtrct_copy_timeout} cp -r ${build_dir}/${xtrct_small_copy_dir}/obmc-phosphor-image-olympus-nuvoton.static.mtd ${xtrct_path}/${xtrct_small_copy_dir}/test_2.static.mtd.tar
+
+git commit --amend  --no-edit
+bitbake ${BITBAKE_OPTS}
+timeout ${xtrct_copy_timeout} cp -r ${build_dir}/${xtrct_small_copy_dir}/obmc-phosphor-image-olympus-nuvoton.static.mtd ${xtrct_path}/${xtrct_small_copy_dir}/test_3.static.mtd.tar
+
 
 if [[ 0 -ne $? ]]; then
   echo "Received a non-zero exit code from timeout"
