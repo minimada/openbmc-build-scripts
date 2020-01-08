@@ -397,6 +397,9 @@ else
   timeout ${xtrct_copy_timeout} cp -r ${build_dir}/* ${xtrct_path}
 fi
 
+git config --global user.email "cs20@example.com"
+git config --global user.name "cs20"
+
 git commit --amend  --no-edit
 bitbake ${BITBAKE_OPTS}
 timeout ${xtrct_copy_timeout} cp -r ${build_dir}/${xtrct_small_copy_dir}/obmc-phosphor-image-olympus-nuvoton.static.mtd ${xtrct_path}/${xtrct_small_copy_dir}/test_1.static.mtd.tar
