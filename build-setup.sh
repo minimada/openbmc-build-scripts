@@ -401,15 +401,15 @@ git config --global user.email "cs20@example.com"
 git config --global user.name "cs20"
 
 git commit --amend  --no-edit
-bitbake ${BITBAKE_OPTS}
+bitbake ${BITBAKE_OPTS} ${bitbake_target}
 timeout ${xtrct_copy_timeout} cp -r ${build_dir}/${xtrct_small_copy_dir}/obmc-phosphor-image-olympus-nuvoton.static.mtd ${xtrct_path}/${xtrct_small_copy_dir}/test_1.static.mtd.tar
 
 git commit --amend  --no-edit
-bitbake ${BITBAKE_OPTS}
+bitbake ${BITBAKE_OPTS} ${bitbake_target}
 timeout ${xtrct_copy_timeout} cp -r ${build_dir}/${xtrct_small_copy_dir}/obmc-phosphor-image-olympus-nuvoton.static.mtd ${xtrct_path}/${xtrct_small_copy_dir}/test_2.static.mtd.tar
 
 git commit --amend  --no-edit
-bitbake ${BITBAKE_OPTS}
+bitbake ${BITBAKE_OPTS} ${bitbake_target}
 timeout ${xtrct_copy_timeout} cp -r ${build_dir}/${xtrct_small_copy_dir}/obmc-phosphor-image-olympus-nuvoton.static.mtd ${xtrct_path}/${xtrct_small_copy_dir}/test_3.static.mtd.tar
 
 
