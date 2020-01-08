@@ -454,6 +454,7 @@ ${mount_ssc_dir} \
 ${WORKSPACE}/build.sh
 
 # To maintain function of resources that used an older path, add a link
+rm -rf ${WORKSPACE}/deploy
 ln -sf ${xtrct_path}/deploy ${WORKSPACE}/deploy
 
 chmod a+x ${WORKSPACE}/openbmc-build-script/gen_images.sh

@@ -85,7 +85,7 @@ cd ${SOURCE_DIR}
 SOURCE_DIR=$(pwd)
 cd - 1>/dev/null
 # remove old test data, if exist
-rm -f ${SOURCE_DIR}/${OUTPUT_HEADER}*
+# rm -f ${SOURCE_DIR}/${OUTPUT_HEADER}*
 # get filename header, but..., name start with test is good for delete
 fname=`basename $1`
 INPUT=${fname%.${OUTPUT_TAIL}}
