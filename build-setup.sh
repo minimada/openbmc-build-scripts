@@ -402,7 +402,7 @@ git config --global user.name "cs20"
 
 git commit --amend  --no-edit
 bitbake ${BITBAKE_OPTS} ${bitbake_target}
-timeout ${xtrct_copy_timeout} cp -r ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/obmc-phosphor-image-olympus-nuvoton.static.mtd.tarc ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_1.static.mtd.tar
+timeout ${xtrct_copy_timeout} cp -r ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/obmc-phosphor-image-olympus-nuvoton.static.mtd.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_1.static.mtd.tar
 
 git commit --amend  --no-edit
 bitbake ${BITBAKE_OPTS} ${bitbake_target}
