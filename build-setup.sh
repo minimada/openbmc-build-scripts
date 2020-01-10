@@ -402,15 +402,15 @@ git config --global user.name "cs20"
 
 git commit --amend  --no-edit
 bitbake ${BITBAKE_OPTS} ${bitbake_target}
-cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/obmc-phosphor-image-olympus-nuvoton.static.mtd.all.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_1.static.mtd.tar
+cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/obmc-phosphor-image-olympus-nuvoton.static.mtd.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_1.static.mtd.tar
 
 git commit --amend  --no-edit
 bitbake ${BITBAKE_OPTS} ${bitbake_target}
-cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/obmc-phosphor-image-olympus-nuvoton.static.mtd.all.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_2.static.mtd.tar
+cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/obmc-phosphor-image-olympus-nuvoton.static.mtd.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_2.static.mtd.tar
 
 git commit --amend  --no-edit
 bitbake ${BITBAKE_OPTS} ${bitbake_target}
-cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/obmc-phosphor-image-olympus-nuvoton.static.mtd.all.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_3.static.mtd.tar
+cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/obmc-phosphor-image-olympus-nuvoton.static.mtd.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_3.static.mtd.tar
 
 
 if [[ 0 -ne $? ]]; then
