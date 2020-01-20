@@ -128,17 +128,17 @@ flist=""
 cd ${TEMP_DIR}
 # no kernel
 fullname "bmc_nokernel_image.static.mtd.tar"
-tar -cf ${output} --exclude=image-kernel* . 
+tar -cf ${output} --exclude=image-kernel* *
 
 # no public key
 fullname "bmc_bad_unsig.static.mtd.tar"
-tar -cf ${output} --exclude=publickey* .
+tar -cf ${output} --exclude=publickey* *
 
 # wrong manifest
 fullname "bmc_bad_manifest.static.mtd.tar"
-sed -i "s/MachineName=.*//g" ${MANIFEST}
+sed -i "s/MachineName=.*/MachineName=test-nuvoton/g" ${MANIFEST}
 openssl dgst -sha256 -sign ${ROOT_DIR}/${PRIVATE_KEY} -out ${MANIFEST}.sig ${MANIFEST}
-tar -cf ${output} .
+tar -cf ${output} *
 
 rm -r ${TEMP_DIR}
 echo "repack finished..."
