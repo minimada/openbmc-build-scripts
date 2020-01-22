@@ -128,7 +128,7 @@ flist=""
 cd ${TEMP_DIR}
 # no kernel
 fullname "bmc_nokernel_image.static.mtd.tar"
-tar -cf ${output} --exclude=image-kernel* *
+tar -cf ${output} --exclude=image-* *
 
 # no public key
 fullname "bmc_bad_unsig.static.mtd.tar"
