@@ -412,6 +412,14 @@ git commit --amend  --no-edit
 bitbake ${BITBAKE_OPTS} ${bitbake_target}
 cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/obmc-phosphor-image-olympus-nuvoton.static.mtd.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_3.static.mtd.tar
 
+git commit --amend  --no-edit
+bitbake ${BITBAKE_OPTS} ${bitbake_target}
+cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/obmc-phosphor-image-olympus-nuvoton.static.mtd.all.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_1.static.mtd.all.tar
+
+git commit --amend  --no-edit
+bitbake ${BITBAKE_OPTS} ${bitbake_target}
+cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/obmc-phosphor-image-olympus-nuvoton.static.mtd.all.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_2.static.mtd.all.tar
+
 
 if [[ 0 -ne $? ]]; then
   echo "Received a non-zero exit code from timeout"
