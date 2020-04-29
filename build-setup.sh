@@ -466,6 +466,8 @@ sshpass -e sftp -oBatchMode=no -b - ${SSHUSER}@${SSHHOST} << !
    put test_1.static.mtd.tar /tftpboot
    put test_2.static.mtd.tar /tftpboot
    put test_3.static.mtd.tar /tftpboot
+   put test_1.static.mtd.all.tar /tftpboot
+   put test_2.static.mtd.all.tar /tftpboot
    put bmc_nokernel_image.static.mtd.tar /tftpboot
    put bmc_bad_unsig.static.mtd.tar /tftpboot
    put bmc_bad_manifest.static.mtd.tar /tftpboot
