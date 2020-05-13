@@ -135,32 +135,32 @@ case ${target} in
     DISTRO="openbmc-openpower"
     ;;
   swift)
-    LAYER_DIR="meta-ibm/meta-witherspoon"
+    LAYER_DIR="meta-ibm"
     MACHINE="swift"
     DISTRO="openbmc-witherspoon"
     ;;
   mihawk)
-    LAYER_DIR="meta-ibm/meta-witherspoon"
+    LAYER_DIR="meta-ibm"
     MACHINE="mihawk"
     DISTRO="openbmc-witherspoon"
     ;;
   witherspoon)
-    LAYER_DIR="meta-ibm/meta-witherspoon"
+    LAYER_DIR="meta-ibm"
     MACHINE="witherspoon"
     DISTRO="openbmc-witherspoon"
     ;;
   witherspoon-128)
-    LAYER_DIR="meta-ibm/meta-witherspoon"
+    LAYER_DIR="meta-ibm"
     MACHINE="witherspoon-128"
     DISTRO="openbmc-witherspoon"
     ;;
   witherspoon-tacoma)
-    LAYER_DIR="meta-ibm/meta-witherspoon"
+    LAYER_DIR="meta-ibm"
     MACHINE="witherspoon-tacoma"
     DISTRO="openbmc-openpower"
     ;;
   rainier)
-    LAYER_DIR="meta-ibm/meta-witherspoon"
+    LAYER_DIR="meta-ibm"
     MACHINE="rainier"
     DISTRO="openbmc-openpower"
     ;;
@@ -192,7 +192,7 @@ case ${target} in
   gsj)
     LAYER_DIR="meta-quanta/meta-gsj"
     MACHINE="gsj"
-    DISTRO="openbmc-phosphor"
+    # Use default DISTRO from layer
     ;;
   olympus-nuvoton)
     LAYER_DIR="meta-quanta/meta-olympus-nuvoton"
@@ -361,13 +361,18 @@ fi
 # Source our build env
 ${BITBAKE_CMD}
 
-if [[ -z "${MACHINE}" || -z "${DISTRO}" ]]; then
-  echo "MACHINE or DISTRO is not configured for ${target}"
+if [[ -z "${MACHINE}" ]]; then
+  echo "MACHINE is not configured for ${target}"
   exit 1
 fi
 
 export MACHINE="${MACHINE}"
-export DISTRO="${DISTRO}"
+if [[ -z "${DISTRO}" ]]; then
+  echo "DISTRO is not configured for ${target} so will use default"
+  unset DISTRO
+else
+  export DISTRO="${DISTRO}"
+fi
 
 # Custom BitBake config settings
 cat >> conf/local.conf << EOF_CONF

@@ -93,13 +93,13 @@ wait
 declare -A PKG_REV=(
   [boost]=1.71.0
   [cereal]=v1.2.2
-  [catch2]=v2.10.0
-  [CLI11]=v1.8.0
-  [fmt]=5.3.0
-  # Snapshot from 2019-03-10
-  [function2]=e3695b4b4fa3c672e25c6462d7900f8d2417a417
-  # Snapshot from 2018-12-17
-  [googletest]=9ab640ce5e5120021c5972d7e60f258bfca64d71
+  [catch2]=v2.11.1
+  [CLI11]=v1.9.0
+  [fmt]=6.1.2
+  # Snapshot from 2020-01-03
+  [function2]=3a0746bf5f601dfed05330aefcb6854354fce07d
+  # Snapshot from 2020-02-13
+  [googletest]=23b2a3b1cf803999fb38175f6e9e038a4495c8a5
   # Release 2019-11-17
   [json]=v3.7.3
   # Snapshot from 2019-05-24
@@ -108,11 +108,13 @@ declare -A PKG_REV=(
   [linux-headers]=8bf6567e77f7aa68975b7c9c6d044bba690bf327
   # Snapshot from 2019-09-03
   [libvncserver]=1354f7f1bb6962dab209eddb9d6aac1f03408110
-  [span-lite]=v0.6.0
+  [span-lite]=v0.7.0
   # version from meta-openembedded/meta-oe/recipes-support/libtinyxml2/libtinyxml2_5.0.1.bb
   [tinyxml2]=37bc3aca429f0164adf68c23444540b4a24b5778
   # version from meta-openembedded/meta-oe/recipes-devtools/valijson/valijson_git.bb
   [valijson]=c2f22fddf599d04dc33fcd7ed257c698a05345d9
+  # version from meta-openembedded/meta-oe/recipes-devtools/nlohmann-fifo/nlohmann-fifo_git.bb
+  [fifo_map]=0dfbf5dacbb15a32c43f912a7e66a54aae39d0f9
 )
 
 # Turn the depcache into a dictionary so we can reference the HEAD of each repo
@@ -162,6 +164,8 @@ FROM ${DOCKER_BASE}${DISTRO} as openbmc-base
 
 ENV DEBIAN_FRONTEND noninteractive
 
+ENV PYTHONPATH "/usr/local/lib/python3.7/site-packages/"
+
 # We need the keys to be imported for dbgsym repos
 # New releases have a package, older ones fall back to manual fetching
 # https://wiki.ubuntu.com/Debug%20Symbol%20Packages
@@ -185,21 +189,14 @@ RUN apt-get update && apt-get install -yy \
     bison \
     flex \
     cmake \
-    python \
-    python-dev \
-    python-git \
-    python-yaml \
-    python-mako \
-    python-pip \
-    python-setuptools \
-    python-socks \
-    python-jsonschema \
     python3 \
     python3-dev\
     python3-yaml \
     python3-mako \
     python3-pip \
     python3-setuptools \
+    python3-git \
+    python3-socks \
     pkg-config \
     autoconf \
     autoconf-archive \
@@ -248,9 +245,14 @@ RUN update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-9 900 \
   --slave /usr/bin/gcov-dump gcov-dump /usr/bin/gcov-dump-9 \
   --slave /usr/bin/gcov-tool gcov-tool /usr/bin/gcov-tool-9
 
-RUN pip install inflection
-RUN pip install pycodestyle
-RUN pip3 install meson==0.52.0
+RUN pip3 install inflection
+RUN pip3 install pycodestyle
+RUN pip3 install jsonschema
+RUN pip3 install meson==0.53.2
+
+# run-clang-tidy-8.py has not moved to python3 yet however it
+# supports it for our needs to just switch it over
+RUN sed -i '1s/python$/python3/' /usr/bin/run-clang-tidy-8.py
 
 FROM openbmc-base as openbmc-lcov
 RUN curl -L https://github.com/linux-test-project/lcov/archive/${PKG_REV['lcov']}.tar.gz | tar -xz && \
@@ -276,7 +278,7 @@ RUN curl -L https://github.com/catchorg/Catch2/archive/${PKG_REV['catch2']}.tar.
 cd Catch2-* && \
 mkdir build && \
 cd build && \
-cmake ${CMAKE_FLAGS[@]} -DCATCH_BUILD_TESTING=OFF -DCATCH_INSTALL_DOCS=OFF .. && \
+cmake ${CMAKE_FLAGS[@]} -DBUILD_TESTING=OFF -DCATCH_INSTALL_DOCS=OFF .. && \
 make -j$(nproc) && \
 make install
 
@@ -289,7 +291,7 @@ RUN curl -L https://github.com/CLIUtils/CLI11/archive/${PKG_REV['CLI11']}.tar.gz
 cd CLI11-* && \
 mkdir build && \
 cd build && \
-cmake ${CMAKE_FLAGS[@]} -DCLI11_TESTING=OFF -DCLI11_EXAMPLES=OFF .. && \
+cmake ${CMAKE_FLAGS[@]} -DCLI11_BUILD_DOCS=OFF -DBUILD_TESTING=OFF -DCLI11_BUILD_EXAMPLES=OFF .. && \
 make -j$(nproc) && \
 make install
 
@@ -306,6 +308,10 @@ FROM openbmc-base as openbmc-json
 RUN mkdir ${PREFIX}/include/nlohmann/ && \
 curl -L -o ${PREFIX}/include/nlohmann/json.hpp https://github.com/nlohmann/json/releases/download/${PKG_REV['json']}/json.hpp && \
 ln -s nlohmann/json.hpp ${PREFIX}/include/json.hpp
+
+FROM openbmc-base as openbmc-fifo_map
+RUN curl -L https://github.com/nlohmann/fifo_map/archive/${PKG_REV['fifo_map']}.tar.gz | tar -xz && \
+cd fifo_map-*/src && cp fifo_map.hpp ${PREFIX}/include/
 
 FROM openbmc-base as openbmc-span-lite
 RUN curl -L https://github.com/martinmoene/span-lite/archive/${PKG_REV['span-lite']}.tar.gz | tar -xz && \
@@ -392,7 +398,7 @@ COPY --from=openbmc-sdbusplus ${PREFIX} ${PREFIX}
 RUN curl -L https://github.com/openbmc/phosphor-dbus-interfaces/archive/${PKG_REV['openbmc/phosphor-dbus-interfaces']}.tar.gz | tar -xz && \
 cd phosphor-dbus-interfaces-* && \
 ./bootstrap.sh && \
-./configure ${CONFIGURE_FLAGS[@]} && \
+./configure ${CONFIGURE_FLAGS[@]} --enable-openpower-dbus-interfaces && \
 make -j$(nproc) && \
 make install
 
@@ -412,6 +418,7 @@ COPY --from=openbmc-sdbusplus ${PREFIX} ${PREFIX}
 COPY --from=openbmc-sdeventplus ${PREFIX} ${PREFIX}
 COPY --from=openbmc-phosphor-dbus-interfaces ${PREFIX} ${PREFIX}
 COPY --from=openbmc-openpower-dbus-interfaces ${PREFIX} ${PREFIX}
+COPY --from=openbmc-fifo_map ${PREFIX} ${PREFIX}
 RUN curl -L https://github.com/openbmc/phosphor-logging/archive/${PKG_REV['openbmc/phosphor-logging']}.tar.gz | tar -xz && \
 cd phosphor-logging-* && \
 ./bootstrap.sh && \
