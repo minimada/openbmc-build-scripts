@@ -435,6 +435,11 @@ EOF_SCRIPT
 
 chmod a+x ${WORKSPACE}/build.sh
 
+# reset BMC before start build
+export token=`curl -k --retry 10 -H "Content-Type: application/json" -X POST https://${BMC_IP}/login -d '{"username" :  "root", "password" :  "0penBmc"}' | grep token | awk '{print $2;}' | tr -d '"'`
+curl -k --retry 10 -H "X-Auth-Token: $token" -X POST https://${BMC_IP}/redfish/v1/Managers/bmc/Actions/Manager.ResetToDefaults -d '{"ResetToDefaultsType": "ResetAll"}'
+
+
 # Give the Docker image a name based on the distro,tag,arch,and target
 img_name=${img_name:-openbmc/${distro}:${img_tag}-${target}-${ARCH}}
 
@@ -487,9 +492,9 @@ sshpass -e sftp -oBatchMode=no -b - ${SSHUSER}@${SSHHOST} << !
    bye
 !
 
-export token=`curl -k -H "Content-Type: application/json" -X POST https://${BMC_IP}/login -d '{"username" :  "root", "password" :  "0penBmc"}' | grep token | awk '{print $2;}' | tr -d '"'`
-curl -k -H "X-Auth-Token: $token" -X POST https://${BMC_IP}/redfish/v1/Managers/bmc/Actions/Manager.ResetToDefaults -d '{"ResetToDefaultsType": "ResetAll"}'
-sleep 300
+#export token=`curl -k -H "Content-Type: application/json" -X POST https://${BMC_IP}/login -d '{"username" :  "root", "password" :  "0penBmc"}' | grep token | awk '{print $2;}' | tr -d '"'`
+#curl -k -H "X-Auth-Token: $token" -X POST https://${BMC_IP}/redfish/v1/Managers/bmc/Actions/Manager.ResetToDefaults -d '{"ResetToDefaultsType": "ResetAll"}'
+#sleep 300
 
 export token=`curl -k -H "Content-Type: application/json" -X POST https://${BMC_IP}/login -d '{"username" :  "root", "password" :  "0penBmc"}' | grep token | awk '{print $2;}' | tr -d '"'`
 
