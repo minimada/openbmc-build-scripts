@@ -86,7 +86,7 @@ nice_priority=${nice_priority:-}
 # Deployment variables
 obmc_dir=${obmc_dir:-${WORKSPACE}/openbmc}
 ssc_dir=${HOME}
-DL_CACHE_HOME=${DL_CACHE_HOME:-/home2/cs20}
+DL_CACHE_HOME=${DL_CACHE_HOME:-/home/cs20}
 xtrct_small_copy_dir=${xtrct_small_copy_dir:-deploy/images}
 xtrct_path="${obmc_dir}/build/tmp"
 xtrct_copy_timeout="300"
@@ -463,6 +463,7 @@ docker run \
 -v "${HOME}":"${HOME}" \
 ${mount_obmc_dir} \
 ${mount_ssc_dir} \
+-v "${DL_CACHE_HOME}:${DL_CACHE_HOME}" \
 --cpus="$num_cpu" \
 -t ${img_name} \
 ${WORKSPACE}/build.sh
