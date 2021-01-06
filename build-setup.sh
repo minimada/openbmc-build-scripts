@@ -490,10 +490,6 @@ sshpass -e sftp -oBatchMode=no -b - ${SSHUSER}@${SSHHOST} << !
 !
 
 export token=`curl -k -H "Content-Type: application/json" -X POST https://${BMC_IP}/login -d '{"username" :  "root", "password" :  "0penBmc"}' | grep token | awk '{print $2;}' | tr -d '"'`
-curl -k -H "X-Auth-Token: $token" -X POST https://${BMC_IP}/redfish/v1/Managers/bmc/Actions/Manager.ResetToDefaults -d '{"ResetToDefaultsType": "ResetAll"}'
-sleep 300
-
-export token=`curl -k -H "Content-Type: application/json" -X POST https://${BMC_IP}/login -d '{"username" :  "root", "password" :  "0penBmc"}' | grep token | awk '{print $2;}' | tr -d '"'`
 
 curl -k -H "X-Auth-Token: $token" -X PATCH -d '{ "HttpPushUriOptions": { "HttpPushUriApplyTime": { "ApplyTime":"OnReset"}}}' https://${BMC_IP}/redfish/v1/UpdateService
 
@@ -504,6 +500,10 @@ sleep 60
 curl -k -H "X-Auth-Token: $token" -X POST https://${BMC_IP}/redfish/v1/Managers/bmc/Actions/Manager.Reset -d '{"ResetType": "GracefulRestart"}'
 
 sleep 600
+
+export token=`curl -k -H "Content-Type: application/json" -X POST https://${BMC_IP}/login -d '{"username" :  "root", "password" :  "0penBmc"}' | grep token | awk '{print $2;}' | tr -d '"'`
+curl -k -H "X-Auth-Token: $token" -X POST https://${BMC_IP}/redfish/v1/Managers/bmc/Actions/Manager.ResetToDefaults -d '{"ResetToDefaultsType": "ResetAll"}'
+sleep 300
 
 # Timestamp for build
 echo "Build completed, $(date)"
