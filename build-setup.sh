@@ -92,6 +92,7 @@ xtrct_path="${obmc_dir}/build/tmp"
 xtrct_copy_timeout="300"
 
 bitbake_target="obmc-phosphor-image"
+bb_target=${bitbake_target}
 PROXY=""
 
 # Determine the architecture
@@ -198,6 +199,11 @@ case ${target} in
   olympus-nuvoton)
     LAYER_DIR="meta-quanta/meta-olympus-nuvoton"
     MACHINE="olympus-nuvoton"
+    DISTRO="openbmc-phosphor"
+    ;;
+  buv-runbmc)
+    LAYER_DIR="meta-evb/meta-evb-nuvoton/meta-buv-runbmc"
+    MACHINE="buv-runbmc"
     DISTRO="openbmc-phosphor"
     ;;
   *)
@@ -408,23 +414,23 @@ git config --global user.name "cs20"
 
 git commit --amend  --no-edit
 bitbake ${BITBAKE_OPTS} ${bitbake_target}
-cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/obmc-phosphor-image-olympus-nuvoton.static.mtd.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_1.static.mtd.tar
+cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/${bb_target}-${MACHINE}.static.mtd.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_1.static.mtd.tar
 
 git commit --amend  --no-edit
 bitbake ${BITBAKE_OPTS} ${bitbake_target}
-cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/obmc-phosphor-image-olympus-nuvoton.static.mtd.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_2.static.mtd.tar
+cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/${bb_target}-${MACHINE}.static.mtd.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_2.static.mtd.tar
 
 git commit --amend  --no-edit
 bitbake ${BITBAKE_OPTS} ${bitbake_target}
-cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/obmc-phosphor-image-olympus-nuvoton.static.mtd.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_3.static.mtd.tar
+cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/${bb_target}-${MACHINE}.static.mtd.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_3.static.mtd.tar
 
 git commit --amend  --no-edit
 bitbake ${BITBAKE_OPTS} ${bitbake_target}
-cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/obmc-phosphor-image-olympus-nuvoton.static.mtd.all.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_1.static.mtd.all.tar
+cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/${bb_target}-${MACHINE}.static.mtd.all.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_1.static.mtd.all.tar
 
 git commit --amend  --no-edit
 bitbake ${BITBAKE_OPTS} ${bitbake_target}
-cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/obmc-phosphor-image-olympus-nuvoton.static.mtd.all.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_2.static.mtd.all.tar
+cp ${build_dir}/${xtrct_small_copy_dir}/${MACHINE}/${bb_target}-${MACHINE}.static.mtd.all.tar ${xtrct_path}/${xtrct_small_copy_dir}/${MACHINE}/test_2.static.mtd.all.tar
 
 
 if [[ 0 -ne $? ]]; then
@@ -474,7 +480,13 @@ ln -sf ${xtrct_path}/deploy ${WORKSPACE}/deploy
 
 chmod a+x ${WORKSPACE}/openbmc-build-script/gen_images.sh
 
-${WORKSPACE}/openbmc-build-script/gen_images.sh ${WORKSPACE}/deploy/images/${MACHINE}/obmc-phosphor-image-${MACHINE}.static.mtd.tar 3
+${WORKSPACE}/openbmc-build-script/gen_images.sh ${WORKSPACE}/deploy/images/${MACHINE}/${bb_target}-${MACHINE}.static.mtd.tar 3
+
+# other target will perform release and test by new way
+if [ "${target}" != "olympus-nuvoton" ];then
+	echo "Build completed, $(date)"
+	exit 0
+fi
 
 cd ${WORKSPACE}/deploy/images/${MACHINE}
 sshpass -e sftp -oBatchMode=no -b - ${SSHUSER}@${SSHHOST} << !
