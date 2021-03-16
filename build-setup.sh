@@ -74,6 +74,7 @@ build_scripts_dir=${build_scripts_dir:-"$( cd "$( dirname "${BASH_SOURCE[0]}" )"
 http_proxy=${http_proxy:-}
 WORKSPACE=${WORKSPACE:-${HOME}/${RANDOM}${RANDOM}}
 num_cpu=${num_cpu:-$(nproc)}
+BRANCH=${BRANCH:-runbmc}
 
 # Docker Image Build Variables:
 build_dir=${build_dir:-/tmp/openbmc}
@@ -119,7 +120,7 @@ rm -rf ${obmc_dir}
 # If the obmc_dir directory doesn't exist clone it in
 if [ ! -d ${obmc_dir} ]; then
   echo "Clone in openbmc master to ${obmc_dir}"
-  git clone -b runbmc --single-branch https://github.com/Nuvoton-Israel/openbmc ${obmc_dir}
+  git clone -b ${BRANCH} --single-branch https://github.com/Nuvoton-Israel/openbmc ${obmc_dir}
 fi
 
 # Make and chown the xtrct_path directory to avoid permission errors
