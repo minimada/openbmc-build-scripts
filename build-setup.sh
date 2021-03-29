@@ -91,7 +91,7 @@ xtrct_small_copy_dir=${xtrct_small_copy_dir:-deploy/images}
 xtrct_path="${obmc_dir}/build/tmp"
 xtrct_copy_timeout="300"
 
-bitbake_target="obmc-phosphor-image"
+bitbake_target=${bitbake_target:-"obmc-phosphor-image"}
 bb_target=${bitbake_target}
 PROXY=""
 
@@ -204,7 +204,7 @@ case ${target} in
   buv-runbmc)
     LAYER_DIR="meta-evb/meta-evb-nuvoton/meta-buv-runbmc"
     MACHINE="buv-runbmc"
-    DISTRO="openbmc-phosphor"
+    DISTRO=${DISTRO:-"openbmc-phosphor"}
     ;;
   *)
     exit 1
