@@ -514,6 +514,9 @@ curl -k -H "X-Auth-Token: $token" -X POST https://${BMC_IP}/redfish/v1/Managers/
 sleep 600
 
 export token=`curl -k -H "Content-Type: application/json" -X POST https://${BMC_IP}/login -d '{"username" :  "root", "password" :  "0penBmc"}' | grep token | awk '{print $2;}' | tr -d '"'`
+# get BMC info for check version
+curl -k -H "X-Auth-Token: $token" -X GET https://${BMC_IP}/xyz/openbmc_project/software/enumerate
+
 curl -k -H "X-Auth-Token: $token" -X POST https://${BMC_IP}/redfish/v1/Managers/bmc/Actions/Manager.ResetToDefaults -d '{"ResetToDefaultsType": "ResetAll"}'
 sleep 300
 
